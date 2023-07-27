@@ -1,0 +1,1 @@
+192.168.122.68 ansible_ssh_common_args='-o StrictHostKeyChecking=no'

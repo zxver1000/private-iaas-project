@@ -1,0 +1,11 @@
+- name: Get Private IP
+  hosts: localhost
+  become: true
+  gather_facts: false
+  tasks:
+    - name: calico-custom
+      lineinfile:
+        path: /home/k/ubuntu22.04/custom-resources.yaml
+        regexp: "^      cidr: 192.168.0.0/16$"
+        line: "      cidr: 10.10.0.0/16"
+      become: true

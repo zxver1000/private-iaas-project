@@ -1,0 +1,9 @@
+- name: Get Private IP
+  hosts: "{{ masterIp }}"
+  become: true
+  gather_facts: false
+  tasks:
+    
+    - name: restore ip address
+      shell: echo "{{ masterIp }}" >> /home/hii.txt
+      retries: 20

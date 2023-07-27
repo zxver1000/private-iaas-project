@@ -1,0 +1,12 @@
+- name: Worker Join
+  hosts: "{{ workerIp }}"
+  become: true
+  gather_facts: false
+  tasks:
+    - name: host-name setting
+      shell: hostnamectl set-hostname {{ VMname }}
+      delay: 5
+    - name: k8s worker join
+      shell: kubeadm join --token {{ token }} --discovery-token-unsafe-skip-ca-verification {{ masterIp }}:6443 --cri-socket=unix:///run/cri-dockerd.sock
+      retries: 20
+      delay: 5

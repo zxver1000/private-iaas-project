@@ -1,0 +1,27 @@
+- name: K8S init
+  hosts: {{ masterIp }}
+  become: true
+  tasks:
+    - name: cri-dockerd image pull
+      shell: sudo kubeadm config images pull --cri-socket unix:///run/cri-dockerd.sock
+      delay: 5
+    - name: k8s init
+      shell: sudo kubeadm init --token {{ token }} --token-ttl 0 --pod-network-cidr=10.10.0.0/16 --apiserver-advertise-address={{ masterIp }} --cri-socket /var/run/cri-dockerd.sock
+      delay: 5
+    - name: k8s config setting1
+      shell: mkdir -p $HOME/.kube
+    - name: k8s config setting2
+      shell: sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    - name: k8s config setting3
+      shell: sudo chown $(id -u):$(id -g) $HOME/.kube/config
+    - name: calico deploy
+      shell: kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/tigera-operator.yaml
+      delay: 10
+    - name: calico-custom-yaml install
+      shell: wget https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/custom-resources.yaml
+      delay: 5
+    - name: calico-custom
+      shell: sed -i -e 's?192.168.0.0/16?10.10.0.0/16?g' custom-resources.yaml
+    - name: calico-custom-yaml deploy
+      shell: kubectl apply -f custom-resources.yaml
+      delay: 2

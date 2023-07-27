@@ -1,0 +1,11 @@
+- name: Worker Join
+  hosts: "{{ workerIp }}"
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Get IP Address
+      shell: kubeadm join --token {{ token }} --discovery-token-unsafe-skip-ca-verification {{ masterIp }}:6443 --cri-socket=unix:///run/cri-dockerd.sock
+      register: defined_vm_ip_result
+      until: "defined_vm_ip_result is success"
+      retries: 30
+      delay: 5
