@@ -2,7 +2,10 @@ import { PickType } from '@nestjs/swagger';
 import { VM } from './vm.schema';
 
 export class VMCreateDto extends PickType(VM, [
-  'name',
+  'guest_name',
   'vcpus',
-  'storage',
+  'memory',
+  'imageType',
+  'os',
+  'networkInterface'
 ] as const) {}

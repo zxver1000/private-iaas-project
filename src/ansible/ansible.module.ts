@@ -7,6 +7,7 @@ import { Schema } from 'mongoose';
 import { ansibleManger } from './ansible.manger';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { mongoRepsitory } from './mongo/mongo.repository';
 @Module({
   imports: [MongooseModule.forFeature([{ name: VM.name, schema: VMSchema }]),
 ServeStaticModule.forRoot({
@@ -14,6 +15,6 @@ ServeStaticModule.forRoot({
 })],
 
   controllers: [AnsibleController],
-  providers: [AnsibleService, ansibleManger],
+  providers: [AnsibleService, ansibleManger,mongoRepsitory],
 })
 export class AnsibleModule {}

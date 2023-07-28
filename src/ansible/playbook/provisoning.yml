@@ -1,0 +1,33 @@
+- name: Provisioning
+  hosts: localhost
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Copy img
+      shell: cp /home/{{ os }}/{{ os }}.img /home/{{ os }}/{{ name }}.img
+      delay: 10
+    - name: Define VM
+      command: >
+        virt-install --import --name {{ name }}
+        --memory {{ memory }} --vcpus {{ vcpus }} --noautoconsole
+        --os-variant {{ os }} --hvm --network bridge=br0
+        --network network={{ networkInterface }}
+        --disk=/home/{{ os }}/{{ name }}.img --import
+    - name: Get IP Address
+      shell: virsh domifaddr {{ name }} | grep -oE '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b'
+      register: defined_vm_ip_result
+      until: "defined_vm_ip_result is success"
+      retries: 60
+      delay: 5
+
+    - name: Add inventory
+      blockinfile:
+        create: true
+        path: "/home/{{ os }}/{{ name }}.txt"
+        block: |
+          {{ defined_vm_ip_result.stdout }} ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+    - name: Save private IP
+      debug:
+        msg:
+          - "{{ defined_vm_ip_result.stdout }}"
+    

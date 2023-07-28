@@ -1,0 +1,15 @@
+- name: Remove VM
+  hosts: localhost
+  become: true
+  gather_facts: false
+  tasks:
+    - name: remove img
+      shell: rm /home/{{ os }}/{{ guest_name }}.img
+      delay: 5
+    - name: destroy Vm
+      shell: virsh destroy {{ guest_name }}
+    - name: undefine Vm
+      shell: virsh undefine {{ guest_name }}
+    - name: remove inventory
+      shell: rm /home/inventory/{{ guest_name }}.txt
+    

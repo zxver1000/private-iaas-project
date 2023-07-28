@@ -23,10 +23,6 @@ export class ansibleManger {
   async createCommand(yaml, inventory, val) {
     var Ansible = require("node-ansible");
     const paths = join("./src/ansible/playbook/test");
-    //var command = new Ansible.AdHoc().module('shell').hosts('localhost').args("ip ad");
-    //var kk=await command.exec();
-    //console.log(kk);
-    //   console.log(kk.output);
     const command = new Ansible.Playbook().playbook(yaml);
    // var result = await k.exec();
    

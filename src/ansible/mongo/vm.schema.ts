@@ -1,7 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { UUID } from 'crypto';
 import { Document, SchemaOptions } from 'mongoose';
-
+import * as mongoosePaginate from 'mongoose-paginate-v2';
+import { VMCreateDto } from './vm.CreateDTO';
 export type VmDocument = VM & Document;
 
 const options: SchemaOptions = {
@@ -15,7 +16,7 @@ const options: SchemaOptions = {
 @Schema()
 export class VM {
   @Prop()
-  name: string;
+  guest_name: string;
 
   @Prop()
   privateIp: string;
@@ -28,6 +29,67 @@ export class VM {
 
   @Prop()
   vcpus: number;
-}
+  @Prop()
+  networkInterface:string;
 
-export const VMSchema = SchemaFactory.createForClass(VM);
+  @Prop()
+  os:string;
+  @Prop()
+  memory:number;
+
+@Prop()
+imageType:string;
+
+readonly readOnlyData: {
+  id: string;
+  privateIp: string;
+  publicIp: string;
+  storage: number;
+  vcpus: number;
+  imageType: string;
+  os:string;
+  networkInterface:string;
+  guest_name:string;
+  memory:number;
+  
+};
+
+}
+export const _VMSchema = SchemaFactory.createForClass(VM);
+
+
+_VMSchema.set('toObject', { virtuals: true });
+_VMSchema.set('toJSON', { virtuals: true });
+_VMSchema.plugin(mongoosePaginate);
+_VMSchema.virtual('readOnlyData').get(function (this: VM) {
+  return {
+    
+    privateIp:this.privateIp,
+    publicIp: this.publicIp,
+    storage: this.storage,
+    vcpus: this.vcpus,
+    imageType: this.imageType,
+    guest_name:this.guest_name,
+    os:this.os,
+    networkInterface:this.networkInterface,
+    memory:this.memory
+
+  };
+});
+export const VMSchema = _VMSchema;
+
+
+export function DeserializedVM(vmdata:Object){
+let returnValue={};
+
+if(vmdata['storage'])returnValue['storage']=vmdata['storage'];
+if(vmdata['guest_name'])returnValue['guest_name']=vmdata['guest_name'];
+if(vmdata['vcpus'])returnValue['vcpus']=vmdata['vcpus'];
+if(vmdata['imageType'])returnValue['imageType']=vmdata['imageType'];
+if(vmdata['os'])returnValue['os']=vmdata['os'];
+if(vmdata['networkInterface'])returnValue['networkInterface']=vmdata['networkInterface'];
+if(vmdata['memory'])returnValue['memory']=vmdata['memory'];
+if(vmdata['privateIp'])returnValue['privateIp']=vmdata['privateIp'];
+return returnValue;
+
+}

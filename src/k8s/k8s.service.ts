@@ -11,20 +11,13 @@ export class K8sService {
 
   async k8s_init(masterData:Object){
 
-   if(!masterData['masterIp']||!masterData['token']||!masterData['VMname']){
-
-    //덜줌
-      return 404;
-   }
+   if(!masterData['masterIp']||!masterData['token']||!masterData['master_name'])return 404;
 else{
   try{
     let yaml_path=join("./src/ansible/playbook/k8s_init");
-  let inven_string="./src/ansible/inventory/"+masterData['VMname']+".txt";
+  let inven_string="/home/inventory/"+masterData['master_name']+".txt";
   let inven_path=join(inven_string);
-  let k=inven_string+"s";
-  console.log(inven_path);
-  console.log("--");
-  console.log(k);
+  
   let command=await this.AnsibleManager.createCommand(yaml_path,inven_path, masterData);
  
    let result=await this.AnsibleManager.execCommand(command);
@@ -42,16 +35,19 @@ else{
 
 
   async k8s_join(workerData:Object){
-    if(!workerData['masterIp']||!workerData['token']||!workerData['workerIp']||!workerData['VMname']){
+    if(!workerData['masterIp']||!workerData['token']||!workerData['workerIp']||!workerData['worker_name'])
       return 404;
-   }
- 
+   
+   else if(workerData['imagetype']){
+      //이거는 디비에서 꺼내와야되는데 ..일단보류
+
+   } 
  else{
 
   try{
     console.log(workerData);
    let yaml_path=join("./src/ansible/playbook/k8s_join");
-   let inven_string="./src/ansible/inventory/"+workerData['VMname']+".txt";
+   let inven_string="/home/inventory/"+workerData['worker_name']+".txt";
    let inven_path=join(inven_string);
    let command=await this.AnsibleManager.createCommand(yaml_path,inven_path, workerData);
    let result=await this.AnsibleManager.execCommand(command);

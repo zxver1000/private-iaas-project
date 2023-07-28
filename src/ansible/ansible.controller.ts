@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query
 } from "@nestjs/common";
 import { AnsibleService } from "./ansible.service";
 import { InjectModel } from "@nestjs/mongoose";
@@ -13,6 +14,7 @@ import { VM, VMSchema, VmDocument } from "./mongo/vm.schema";
 import { Model } from "mongoose";
 import { ansibleManger } from "./ansible.manger";
 import { join } from "path";
+import { VMCreateDto } from "./mongo/vm.CreateDTO";
 @Controller("ansible")
 export class AnsibleController {
   constructor(
@@ -22,36 +24,42 @@ export class AnsibleController {
   ) {}
 
   @Get()
-  async getAllVm() {
-    //let s = { publicIp: 1, name: 'hihi' };
-    const s = await this.VMModel.find();
-    console.log(s);
-    return s;
+  async getVms(@Query('pagenum') pagenum:string) {
+    
+   const result = await this.AnsibleService.getVms(Number(pagenum));
+    
+    return result;
   }
 
   @Get(":vmid")
   async getVm(@Param("vmid") vmId: string) {
-    let yaml_path=join("./src/ansible/playbook/test2");
-    let inven_path=join("./src/ansible/inventory/hi.txt");
-    let k=undefined;
-    let ma={"masterIp":"192.168.122.7"};
-    let command= await this.AnsibleManger.createCommand(yaml_path, k, k);
-    let result=await this.AnsibleManger.execCommand(command);
+    
+    const result=await this.AnsibleService.getVmInfo(vmId);
    
-    let re=await this.AnsibleManger.getResultAsJson(result.output);
-   
-   
-    return "complet";
+    return result;
 
 
   }
 
   @Post()
-  async createVm(@Body() vmData: object) {}
+  async createVm(@Body() vmData: VMCreateDto) {
+//request -> type,name,vcpus,stroage@@
+
+let result=await this.AnsibleService.createVm(vmData);
+
+return result;
+  
+  }
 
   @Patch(":vmid")
   async updateVm(@Body() updateData: object) {}
 
-  @Delete(":vmid")
-  async deleteVm() {}
+  @Delete()
+  async deleteVm(@Body('vmId') vmId:string) {
+     
+    
+    const result=await this.AnsibleService.deleteVm(vmId);
+
+    return result;
+  }
 }
