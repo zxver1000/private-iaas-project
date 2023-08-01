@@ -1,0 +1,11 @@
+- name: Delete Virtual Network
+  hosts: localhost
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Destroy Virtual Network
+      shell: virsh net-destroy {{ networkname }}
+      delay: 3
+    - name: Undefine Virtual Network
+      shell: virsh net-undefine {{ networkname }}
+      

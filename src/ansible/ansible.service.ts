@@ -79,7 +79,7 @@ async deleteVm(vmId:string){
     let yaml_path=join("./src/ansible/playbook/removeVm");
     let vmData=await this.getVmInfo(vmId);   
 
-    if(!vmData)return HttpStatus.NO_CONTENT;
+    if(!vmData)return HttpStatus.OK;
     let inven_string=undefined;
  
     

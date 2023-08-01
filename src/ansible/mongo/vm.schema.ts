@@ -13,8 +13,8 @@ const options: SchemaOptions = {
   id: true,
 };
 
-@Schema()
-export class VM {
+@Schema(options)
+export class VM extends Document{
   @Prop()
   guest_name: string;
 
@@ -63,7 +63,7 @@ _VMSchema.set('toJSON', { virtuals: true });
 _VMSchema.plugin(mongoosePaginate);
 _VMSchema.virtual('readOnlyData').get(function (this: VM) {
   return {
-    
+    id:this.id,
     privateIp:this.privateIp,
     publicIp: this.publicIp,
     storage: this.storage,

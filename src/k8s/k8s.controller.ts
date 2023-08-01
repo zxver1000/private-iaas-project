@@ -6,10 +6,13 @@ import {
   Param,
   Patch,
   Post,
+  UseInterceptors,
+  HttpStatus
 } from "@nestjs/common";
 import { join } from "path";
 import { ansibleManger } from "../ansible/ansible.manger";
 import { K8sService } from './k8s.service';
+import { SuccessInterceptor } from "../common/interceptor/success.interceptor";
 @Controller('k8s')
 export class K8sController {
   constructor(private readonly AnsibleManger: ansibleManger,
@@ -23,6 +26,7 @@ export class K8sController {
   }
 
   @Post('master')
+  @UseInterceptors(SuccessInterceptor(HttpStatus.OK))
   async initK8s(@Body() masterData:Object){
     //requrire masterip token
     
@@ -34,6 +38,7 @@ export class K8sController {
 
 
 @Post('worker')
+@UseInterceptors(SuccessInterceptor(HttpStatus.OK))
 async joinK8s(@Body() workerData:Object){
 
   let result=await this.k8sService.k8s_join(workerData);

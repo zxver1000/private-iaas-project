@@ -1,0 +1,43 @@
+- name: Create Virtual Network
+  hosts: localhost
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Create Network xml
+      blockinfile:
+        create: true
+        path: /etc/libvirt/qemu/networks/{{ networkname }}.xml
+        block: |
+          <network>
+            <name>{{ networkname }}</name>
+              <ip address='{{ ip }}' netmask='{{ subnetMask }}'>
+                <dhcp>
+                  <range start='{{ startIp }}' end='{{ endIp }}'/>
+                </dhcp>
+              </ip>
+          </network>
+    
+    - name: remove ansible Begin annotation
+      lineinfile:
+        path: /etc/libvirt/qemu/networks/{{ networkname }}.xml
+        state: present
+        regexp: "^# BEGIN ANSIBLE MANAGED BLOCK$"
+        line: ""
+  
+    - name: remove ansible End annotation
+      lineinfile:
+        path: /etc/libvirt/qemu/networks/{{ networkname }}.xml
+        state: present
+        regexp: "^# END ANSIBLE MANAGED BLOCK$"
+        line: ""
+      delay: 5
+    - name: VirtualNetwork Define
+      shell: virsh net-define /etc/libvirt/qemu/networks/{{ networkname }}.xml
+      delay: 3
+    - name: VirtualNetwork Start
+      shell: virsh net-start {{ networkname }}
+      delay: 3
+    - name: VirtualNetowrk Auto start
+      shell: virsh net-autostart {{ networkname }}
+      delay: 3
+     
