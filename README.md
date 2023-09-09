@@ -53,7 +53,7 @@
 ## .env
 ```
 PORT=
-DBURL=(MONGODBURL)
+DBURI=(MONGODB)
 ```
 
 
