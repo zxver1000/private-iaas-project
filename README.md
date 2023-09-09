@@ -43,3 +43,17 @@
     1. Ubuntu22.04,20.04,18.04이미지를 이용하여 SSH Network설정을 Customize한 cloudImage
     2. K8S.img
         1. k8s 환경설정을 Customize한 cloudImage입니다
+
+
+
+
+
+
+
+## .env
+```
+PORT=
+DBURL=(MONGODBURL)
+```
+
+
