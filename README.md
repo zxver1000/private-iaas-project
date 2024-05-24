@@ -1,6 +1,6 @@
 
 
-## private Iaas Api Server  (2023.08.01~2023.08.21)
+## private Iaas Api Server
 
 ### Summary
 
@@ -47,6 +47,12 @@
 
 
 
+
+## 제공기능
+
+- VM 생성 조회 삭제 기능
+- Virtual Network 생성 조회 삭제 기능
+- K8S clsuter 구축 기능
 
 
 
